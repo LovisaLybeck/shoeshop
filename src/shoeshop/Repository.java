@@ -184,7 +184,7 @@ public class Repository {
         
         return ordersMap;
     }
-    
+
     public String addToCart(int customerID, int shoeID, int orderID){
         String result = "";
         
@@ -192,9 +192,14 @@ public class Repository {
                 p.getProperty("username"), p.getProperty("password"));
                 CallableStatement stm = con.prepareCall("call addToCart(" + customerID + ", " + shoeID + ", " +orderID + ")");
                 ){
-            stm.execute();
-            result = "Varan är tillagd";
-                
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                result = rs.getString("error");
+            }
+            if (!result.equals("")) {
+                return result;
+            }
+              
         }catch (SQLException se){
             result = "Något gick fel";
             System.out.println(se.getMessage());
@@ -204,6 +209,6 @@ public class Repository {
             e.printStackTrace();
         }
         
-        return result;
+        return "Varan är tillagd";
     }
 }
